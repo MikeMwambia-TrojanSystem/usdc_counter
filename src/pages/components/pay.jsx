@@ -5,36 +5,32 @@ import TextField  from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import Button from '@mui/material/Button';
 
-export default function Kshsamount(){
-    let amountInTreasury = 'Kshs 3,200,000'
+export default function Paybill(){
         return (
     <React.Fragment>
         <Grid>
-        <Typography component="h1" variant="h6" 
-        align="center">
-        1 USDC = 125 Kenyan Shillings
-        </Typography>
-        <Typography variant="subtitle1" 
-        align="center" color="text.secondary">
-        AVAILABLE USDC IN TREASURY : - {amountInTreasury}
-        </Typography>
+            <Typography variant="h6"  
+            align="center">
+            Pay Kshs 1500 to MPESA PAYBILL NO. 345678
+            </Typography>
+            <Typography variant="subtitle1" 
+            color="text.secondary"  
+            align="center">
+            Once paid enter Phone number and click next to verify
+            </Typography>
         </Grid>
-        <Grid>
-        <Typography variant="subtitle2">
-            Enter amount in Kenya shillings you wish to spend
-            (Max {amountInTreasury})
-        </Typography>
 
+        <Grid>
             <TextField
             id="amountInKshs"
             name="amountInKshs"
-            label="Kshs"
+            label="Phone number"
             fullWidth
             variant="standard"
             />
         </Grid>
-
     </React.Fragment>
         )
-}
+    }
