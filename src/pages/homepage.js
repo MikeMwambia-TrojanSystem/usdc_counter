@@ -21,7 +21,6 @@ import  Successpay from './components/success';
 import  Usdcaddress from './components/usdcaddress';
 import  Verifypay from './components/verifypay';
 
-
 //Copyright 
 function Copyright() {
     return (
@@ -70,8 +69,13 @@ const theme = createTheme();
 
 //Checkout function 
 export default function Checkout() {
+
     const [activeStep, setActiveStep] = React.useState(0);
-  
+    const [usdcAddress,setusdcAddress] = React.useState(null);
+    const [amountInKshs,setamountInKshs] = React.useState(0);
+    const [phoneNumber,setphoneNumber] = React.useState(null);
+    const paybillnumber  = process.env.NEXT_PUBLIC_PAYBILL;
+    
     const handleNext = () => {
       setActiveStep(activeStep + 1);
     };
