@@ -43,58 +43,72 @@ function Copyright() {
   );
 }
 
-const steps = [
-  {
-    title: "Enter Amount",
-    component: getStepContent(0),
-  },
-  {
-    title: "Enter USDC Address",
-    component: getStepContent(1),
-  },
-  {
-    title: "Make Payment",
-    component: getStepContent(2),
-  },
-  {
-    title: "Recieve USDC",
-    component: getStepContent(3),
-  },
-];
 
-function getStepContent(step) {
+
+
+function getStepContent(step,data) {
   switch (step) {
     case 0:
       //Check amount
-      return <Kshsamount />;
+      return <Kshsamount data={data}/>;
 
     case 1:
       //Check USDC address
-      return <Usdcaddress />;
+      return <Usdcaddress data={data}/>;
 
     case 2:
       //Check phone number
-      return <Paybill />;
+      return <Paybill data={data}/>;
 
     case 3:
       //Show if number verified
-      return <Successpay />;
+      return <Successpay data={data}/>;
 
     case 4:
       //Show if error verifying number
-      return <Errorresponse />;
+      return <Errorresponse data={data}/>;
 
     default:
       throw new Error("Unkown step");
   }
 }
 
+
 //Theme
 const theme = createTheme();
 
 //Checkout function
 export default function Checkout(props) {
+
   const { open, error, paybillnumber, maxAmount, rate } = props;
+  const amountEntered = 500;
+  const addressEntered = '8808080808dde008de';
+  const cryptoAmnt = Number(amountEntered) / Number(rate);
+  const awaitMpesaConfirmation = true; //false; default
+  const amntData = {maxAmount,rate}
+  const usdcData = {cryptoAmnt,amountEntered}
+  const payData = {paybillnumber,amountEntered}
+  const successData = {cryptoAmnt,addressEntered}
+
+  const steps = [
+    {
+      title: "Enter Amount",
+      component: getStepContent(0,amntData)
+    },
+    {
+      title: "Enter USDC Address",
+      component: getStepContent(1,usdcData)
+    },
+    {
+      title: "Make Payment",
+      component: getStepContent(2,payData)
+    },
+    {
+      title: "Recieve USDC",
+      //Or Error depending
+      component: getStepContent(3,successData)
+    },
+  ];
 
   const [activeStep, setActiveStep] = React.useState(0);
   const [usdcAddress, setusdcAddress] = React.useState(null);
@@ -156,8 +170,7 @@ export default function Checkout(props) {
                       <Button
                         disabled={index === 0 || open === false }
                         onClick={handleBack}
-                        size="small"
-                      >
+                        size="small">
                         Back
                       </Button>
                     </div>
@@ -202,7 +215,7 @@ export const getServerSideProps = async (context) => {
   const paybillnumber = process.env.NEXT_PUBLIC_PAYBILL;
 
   //Maximum Amount in Kshs
-  let maxAmount = 0;
+  let maxAmount = '3,250,000'; //0; default 0
 
   //USDC Balance in treasury
   let usdcBalance = 0;
@@ -211,7 +224,7 @@ export const getServerSideProps = async (context) => {
   try {
     async (treasuryAddress) => {
       //Call API to get balance
-      usdcBalance = await getBalance(treasuryAddress);
+      usdcBalance = 47; //await getBalance(treasuryAddress);
 
       maxAmount = Number(usdcBalance) * Number(rate);
 
@@ -232,9 +245,3 @@ export const getServerSideProps = async (context) => {
   };
 };
 
-// function HomePage() {
-
-//     return <div>Welcome to Next.js!</div>
-// }
-
-// export default HomePage

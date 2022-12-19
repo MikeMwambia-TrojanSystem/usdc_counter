@@ -3,12 +3,12 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 
-export default function Paybill() {
+export default function Paybill(data) {
   return (
     <React.Fragment>
       <Grid>
         <Typography variant="h6" align="center">
-          Pay Kshs 1500 to MPESA PAYBILL NO. 345678
+          Pay Kshs {data.data.amountEntered} to MPESA PAYBILL NO. {data.data.paybillnumber}
         </Typography>
         <Typography variant="subtitle1" color="text.secondary" align="center">
           Once paid enter Phone number and click next to verify

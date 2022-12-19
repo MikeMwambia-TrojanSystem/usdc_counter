@@ -6,14 +6,17 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 
-export default function Kshsamount() {
-  let amountInTreasury = "Kshs 3,200,000";
+export default function Kshsamount(data) {
+  
+  let amountInTreasury = data.data.maxAmount;
   let minAmount = "Kshs 250";
+  let rate = data.data.rate;
+
   return (
     <React.Fragment>
       <Grid>
         <Typography component="h1" variant="h6" align="center" sx={{ m: 1 }}>
-          1 USDC = 125 Kenyan Shillings
+          1 USDC = {rate} Kenyan Shillings 
         </Typography>
         <Typography
           variant="subtitle1"

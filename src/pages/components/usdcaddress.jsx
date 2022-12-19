@@ -6,20 +6,20 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 
-export default function Usdcaddress() {
-  let KshAmount = "Kshs 1500";
-  let UsdcAmount = "3.4 USDC";
+export default function Usdcaddress(data) {
+  let KshAmount = data.data.amountEntered;
+  let UsdcAmount = data.data.cryptoAmnt;
   return (
     <React.Fragment>
       <Grid>
         <Typography variant="h6" align="center">
-          You will recieve {UsdcAmount} for {KshAmount}
+          You will recieve {UsdcAmount} USDC for Kshs {KshAmount}
         </Typography>
       </Grid>
 
       <Grid>
         <Typography variant="subtitle1" align="center" color="text.secondary">
-          Enter USDC address to receive {UsdcAmount}
+          Enter USDC address to receive {UsdcAmount} USDC Coins
         </Typography>
 
         <TextField
