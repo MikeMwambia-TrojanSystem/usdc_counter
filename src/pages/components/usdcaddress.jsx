@@ -1,25 +1,58 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
+import validate from '../utils/validation';
 
-export default function Usdcaddress(data) {
-  let KshAmount = data.data.amountEntered;
-  let UsdcAmount = data.data.cryptoAmnt;
+export default function Usdcaddress({data}) {
+
+  let setNextDisabled = data.setNextDisabled;
+
+  let usdcAddressH = data.setusdcAddress;
+
+  let setcryptoAmnt = data.setcryptoAmnt;
+
+  let rate = process.env.NEXT_PUBLIC_RATE;
+
+  let kshsAmount = data.amountInKshs;
+
+  let cryptoAmntT =   Number(kshsAmount) / Number(rate);
+  setcryptoAmnt(cryptoAmntT);
+
+  const [usdcAddress, setusdcAddressU] = React.useState(data.usdcAddress);
+  usdcAddressH(usdcAddress);
+
+  const [helperText, sethelperText] = React.useState(null);
+
+
+  useEffect(()=>{
+
+  //Verify if true enable next button
+  (validate('usdc',usdcAddress))  ? (setNextDisabled(false),sethelperText(null)):
+  (setNextDisabled(true),sethelperText(`Enter polygon chain USDC address`))
+
+   //Do clean up 
+   return ()=>{
+
+  //Verify if true enable next button
+  (validate('amount',kshsAmount) && validate('phone',data.phoneNumber))  ? setNextDisabled(false) : setNextDisabled(true);
+
+  }
+
+  },[usdcAddress])
+
+
   return (
     <React.Fragment>
       <Grid>
         <Typography variant="h6" align="center">
-          You will recieve {UsdcAmount} USDC for Kshs {KshAmount}
+          You will recieve {cryptoAmntT} USDC for Kshs {kshsAmount}
         </Typography>
       </Grid>
 
       <Grid>
         <Typography variant="subtitle1" align="center" color="text.secondary">
-          Enter USDC address to receive {UsdcAmount} USDC Coins
+          Enter USDC address to receive {cryptoAmntT} USDC Coins
         </Typography>
 
         <TextField
@@ -27,8 +60,13 @@ export default function Usdcaddress(data) {
           name="usdcAddress"
           label="USDC address"
           fullWidth
+          value={usdcAddress}
           variant="standard"
+          onChange={e => setusdcAddressU(e.target.value)}
         />
+        <Typography variant="caption" sx={{ m: 1 }}>
+          {helperText}
+        </Typography>
       </Grid>
     </React.Fragment>
   );

@@ -15,14 +15,14 @@ import IconButton from "@mui/material/IconButton";
 import Avatar from "@mui/material/Avatar";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Kshsamount from "./components/amount";
-import Errorresponse from "./components/error";
 import Paybill from "./components/pay";
-import Successpay from "./components/success";
+import Status from "./components/status";
 import Usdcaddress from "./components/usdcaddress";
-import getBalance from "./api/checkBalance";
 import { StepContent } from "@mui/material";
 import ErrorIcon from '@mui/icons-material/Error';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import { Toaster } from 'react-hot-toast';
+
 
 //Copyright
 function Copyright() {
@@ -44,10 +44,13 @@ function Copyright() {
 }
 
 
+function getStepContent(...theArgs) {
 
+  const step = theArgs[0];
+  const data = theArgs[1];
 
-function getStepContent(step,data) {
   switch (step) {
+  
     case 0:
       //Check amount
       return <Kshsamount data={data}/>;
@@ -61,16 +64,13 @@ function getStepContent(step,data) {
       return <Paybill data={data}/>;
 
     case 3:
-      //Show if number verified
-      return <Successpay data={data}/>;
-
-    case 4:
-      //Show if error verifying number
-      return <Errorresponse data={data}/>;
+      //Show response of payments
+      return <Status data={data}/>;
 
     default:
       throw new Error("Unkown step");
   }
+
 }
 
 
@@ -80,15 +80,54 @@ const theme = createTheme();
 //Checkout function
 export default function Checkout(props) {
 
-  const { open, error, paybillnumber, maxAmount, rate } = props;
-  const amountEntered = 500;
-  const addressEntered = '8808080808dde008de';
-  const cryptoAmnt = Number(amountEntered) / Number(rate);
-  const awaitMpesaConfirmation = true; //false; default
-  const amntData = {maxAmount,rate}
-  const usdcData = {cryptoAmnt,amountEntered}
-  const payData = {paybillnumber,amountEntered}
-  const successData = {cryptoAmnt,addressEntered}
+  const { open, paybillnumber, maxAmount, rate } = props;
+
+
+  const successData = 'Success';
+
+  const [activeStep, setActiveStep] = React.useState(0);
+  const [nextDisabled, setNextDisabled] = React.useState(true);
+  const [amountInKshs, setamountInKshs] = React.useState('');
+  const [usdcAddress, setusdcAddress] = React.useState('');
+  const [phoneNumber, setphoneNumber] = React.useState('');
+  const [cryptoAmnt, setcryptoAmnt] = React.useState(0);
+
+  //Amount component
+  const amntData = {
+                    maxAmount,
+                    rate,
+                    usdcAddress,
+                    amountInKshs,
+                    setamountInKshs:setamountInKshs,
+                    setNextDisabled:setNextDisabled
+                  };
+
+  //USDC component
+  const usdcData = {
+                    amountInKshs,
+                    usdcAddress,
+                    phoneNumber,
+                    setNextDisabled:setNextDisabled,
+                    setusdcAddress : setusdcAddress,
+                    setcryptoAmnt : setcryptoAmnt
+                  };
+
+  //Payment data
+  const payData = {
+                    amountInKshs,
+                    phoneNumber,
+                    paybillnumber,
+                    setNextDisabled:setNextDisabled,
+                    setphoneNumber : setphoneNumber
+                  }
+
+  //Status data
+  const statusData = {
+                     successData,
+                     usdcAddress,
+                     cryptoAmnt,
+                     setNextDisabled:setNextDisabled
+                    }
 
   const steps = [
     {
@@ -106,14 +145,11 @@ export default function Checkout(props) {
     {
       title: "Recieve USDC",
       //Or Error depending
-      component: getStepContent(3,successData)
+      component: getStepContent(3,statusData)
     },
   ];
 
-  const [activeStep, setActiveStep] = React.useState(0);
-  const [usdcAddress, setusdcAddress] = React.useState(null);
-  const [amountInKshs, setamountInKshs] = React.useState(0);
-  const [phoneNumber, setphoneNumber] = React.useState(null);
+
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -123,8 +159,11 @@ export default function Checkout(props) {
     setActiveStep(activeStep - 1);
   };
 
+
+  
   return (
     <ThemeProvider theme={theme}>
+      <Toaster/>
       <CssBaseline />
       <AppBar
         position="absolute"
@@ -162,7 +201,7 @@ export default function Checkout(props) {
                   <Box sx={{ "& button": { m: 1 } }}>
                     <div>
                       <Button
-                        disabled={open === false} 
+                        disabled={open === false || nextDisabled} 
                         onClick={handleNext} 
                         size="small">
                         {index === steps.length - 1 ? "Finish" : "Next"}
@@ -215,7 +254,10 @@ export const getServerSideProps = async (context) => {
   const paybillnumber = process.env.NEXT_PUBLIC_PAYBILL;
 
   //Maximum Amount in Kshs
-  let maxAmount = '3,250,000'; //0; default 0
+  let maxAmount = process.env.NEXT_PUBLIC_maxAmount; //0; default 0
+
+  //Minimum Amount in Kshs
+  let minAmount = process.env.NEXT_PUBLIC_minAmount;
 
   //USDC Balance in treasury
   let usdcBalance = 0;
@@ -241,6 +283,7 @@ export const getServerSideProps = async (context) => {
       paybillnumber,
       maxAmount,
       rate,
+      minAmount
     },
   };
 };
