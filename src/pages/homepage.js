@@ -15,14 +15,14 @@ import IconButton from "@mui/material/IconButton";
 import Avatar from "@mui/material/Avatar";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Kshsamount from "./components/amount";
-import Errorresponse from "./components/error";
 import Paybill from "./components/pay";
-import Successpay from "./components/success";
+import Status from "./components/status";
 import Usdcaddress from "./components/usdcaddress";
-import getBalance from "./api/checkBalance";
 import { StepContent } from "@mui/material";
 import ErrorIcon from '@mui/icons-material/Error';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import { Toaster } from 'react-hot-toast';
+
 
 //Copyright
 function Copyright() {
@@ -43,63 +43,113 @@ function Copyright() {
   );
 }
 
-const steps = [
-  {
-    title: "Enter Amount",
-    component: getStepContent(0),
-  },
-  {
-    title: "Enter USDC Address",
-    component: getStepContent(1),
-  },
-  {
-    title: "Make Payment",
-    component: getStepContent(2),
-  },
-  {
-    title: "Recieve USDC",
-    component: getStepContent(3),
-  },
-];
 
-function getStepContent(step) {
+function getStepContent(...theArgs) {
+
+  const step = theArgs[0];
+  const data = theArgs[1];
+
   switch (step) {
+  
     case 0:
       //Check amount
-      return <Kshsamount />;
+      return <Kshsamount data={data}/>;
 
     case 1:
       //Check USDC address
-      return <Usdcaddress />;
+      return <Usdcaddress data={data}/>;
 
     case 2:
       //Check phone number
-      return <Paybill />;
+      return <Paybill data={data}/>;
 
     case 3:
-      //Show if number verified
-      return <Successpay />;
-
-    case 4:
-      //Show if error verifying number
-      return <Errorresponse />;
+      //Show response of payments
+      return <Status data={data}/>;
 
     default:
       throw new Error("Unkown step");
   }
+
 }
+
 
 //Theme
 const theme = createTheme();
 
 //Checkout function
 export default function Checkout(props) {
-  const { open, error, paybillnumber, maxAmount, rate } = props;
+
+  const { open, paybillnumber, maxAmount, rate } = props;
+
+
+  const successData = 'Success';
 
   const [activeStep, setActiveStep] = React.useState(0);
-  const [usdcAddress, setusdcAddress] = React.useState(null);
-  const [amountInKshs, setamountInKshs] = React.useState(0);
-  const [phoneNumber, setphoneNumber] = React.useState(null);
+  const [nextDisabled, setNextDisabled] = React.useState(true);
+  const [amountInKshs, setamountInKshs] = React.useState('');
+  const [usdcAddress, setusdcAddress] = React.useState('');
+  const [phoneNumber, setphoneNumber] = React.useState('');
+  const [cryptoAmnt, setcryptoAmnt] = React.useState(0);
+
+  //Amount component
+  const amntData = {
+                    maxAmount,
+                    rate,
+                    usdcAddress,
+                    amountInKshs,
+                    setamountInKshs:setamountInKshs,
+                    setNextDisabled:setNextDisabled
+                  };
+
+  //USDC component
+  const usdcData = {
+                    amountInKshs,
+                    usdcAddress,
+                    phoneNumber,
+                    setNextDisabled:setNextDisabled,
+                    setusdcAddress : setusdcAddress,
+                    setcryptoAmnt : setcryptoAmnt
+                  };
+
+  //Payment data
+  const payData = {
+                    amountInKshs,
+                    phoneNumber,
+                    paybillnumber,
+                    setNextDisabled:setNextDisabled,
+                    setphoneNumber : setphoneNumber
+                  }
+
+  //Status data
+  const statusData = {
+                     successData,
+                     usdcAddress,
+                     cryptoAmnt,
+                     setNextDisabled:setNextDisabled
+                    }
+
+  const steps = [
+    {
+      title: "Enter Amount",
+      component: getStepContent(0,amntData)
+    },
+    {
+      title: "Enter USDC Address",
+      component: getStepContent(1,usdcData)
+    },
+    {
+      title: "Make Payment",
+      component: getStepContent(2,payData)
+    },
+    {
+      title: "Recieve USDC",
+      //Or Error depending
+      component: getStepContent(3,statusData)
+    },
+  ];
+
+
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -109,8 +159,11 @@ export default function Checkout(props) {
     setActiveStep(activeStep - 1);
   };
 
+
+  
   return (
     <ThemeProvider theme={theme}>
+      <Toaster/>
       <CssBaseline />
       <AppBar
         position="absolute"
@@ -148,7 +201,7 @@ export default function Checkout(props) {
                   <Box sx={{ "& button": { m: 1 } }}>
                     <div>
                       <Button
-                        disabled={open === false} 
+                        disabled={open === false || nextDisabled} 
                         onClick={handleNext} 
                         size="small">
                         {index === steps.length - 1 ? "Finish" : "Next"}
@@ -156,8 +209,7 @@ export default function Checkout(props) {
                       <Button
                         disabled={index === 0 || open === false }
                         onClick={handleBack}
-                        size="small"
-                      >
+                        size="small">
                         Back
                       </Button>
                     </div>
@@ -202,7 +254,10 @@ export const getServerSideProps = async (context) => {
   const paybillnumber = process.env.NEXT_PUBLIC_PAYBILL;
 
   //Maximum Amount in Kshs
-  let maxAmount = 0;
+  let maxAmount = process.env.NEXT_PUBLIC_maxAmount; //0; default 0
+
+  //Minimum Amount in Kshs
+  let minAmount = process.env.NEXT_PUBLIC_minAmount;
 
   //USDC Balance in treasury
   let usdcBalance = 0;
@@ -211,7 +266,7 @@ export const getServerSideProps = async (context) => {
   try {
     async (treasuryAddress) => {
       //Call API to get balance
-      usdcBalance = await getBalance(treasuryAddress);
+      usdcBalance = 47; //await getBalance(treasuryAddress);
 
       maxAmount = Number(usdcBalance) * Number(rate);
 
@@ -228,13 +283,8 @@ export const getServerSideProps = async (context) => {
       paybillnumber,
       maxAmount,
       rate,
+      minAmount
     },
   };
 };
 
-// function HomePage() {
-
-//     return <div>Welcome to Next.js!</div>
-// }
-
-// export default HomePage
