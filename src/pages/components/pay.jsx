@@ -4,19 +4,21 @@ import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import validate from "../utils/validation";
 
-export default function Paybill({amountInKshs,phoneNumberI,paybillnumber,setNextDisabledF,setphoneNumberI}) {
-  
+export default function Paybill({
+  amountInKshs,
+  phoneNumberI,
+  paybillnumber,
+  setNextDisabledF,
+  setphoneNumberI,
+}) {
   let setphoneNumber = setphoneNumberI;
 
   let setNextDisabled = setNextDisabledF;
 
-
   const [phoneNumber, phoneNumberset] = React.useState(phoneNumberI);
- 
 
   //Keep track of the phoneNumber and enable or disable next
   useEffect(() => {
-
     //Set phone number
     setphoneNumber(phoneNumber);
 

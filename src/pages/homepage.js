@@ -46,8 +46,8 @@ function getStepContent(...theArgs) {
   const step = theArgs[0];
   const data = theArgs[1];
 
-  console.log(theArgs)
-  console.log('hhhhhhhh')
+  console.log(theArgs);
+  console.log("hhhhhhhh");
   let usdcAddress = null;
   let amountInKshs = null;
   let phoneNumber = null;
@@ -55,17 +55,21 @@ function getStepContent(...theArgs) {
   let setNextDisabled = null;
   let setusdcAddress = null;
 
-
   switch (step) {
-
     case 0:
-       usdcAddress = theArgs[1];
-       amountInKshs = theArgs[2];
-       setamountInKshs = theArgs[3];
-       setNextDisabled = theArgs[4];
+      usdcAddress = theArgs[1];
+      amountInKshs = theArgs[2];
+      setamountInKshs = theArgs[3];
+      setNextDisabled = theArgs[4];
 
-      return <Kshsamount usdcAddress={usdcAddress} amountInKshs ={amountInKshs} 
-      setamountInKshs={setamountInKshs} setNextDisabled={setNextDisabled}/>;
+      return (
+        <Kshsamount
+          usdcAddress={usdcAddress}
+          amountInKshs={amountInKshs}
+          setamountInKshs={setamountInKshs}
+          setNextDisabled={setNextDisabled}
+        />
+      );
 
     case 1:
       let usdcAddressI = theArgs[1];
@@ -75,8 +79,16 @@ function getStepContent(...theArgs) {
       setusdcAddress = theArgs[5];
       let setcryptoAmntI = theArgs[6];
 
-      return <Usdcaddress usdcAddressI={usdcAddressI} amountInKshs={amountInKshs} phoneNumber = {phoneNumber} 
-      setNextDisabledF={setNextDisabledF} setusdcAddress={setusdcAddress} setcryptoAmntI={setcryptoAmntI}/>;
+      return (
+        <Usdcaddress
+          usdcAddressI={usdcAddressI}
+          amountInKshs={amountInKshs}
+          phoneNumber={phoneNumber}
+          setNextDisabledF={setNextDisabledF}
+          setusdcAddress={setusdcAddress}
+          setcryptoAmntI={setcryptoAmntI}
+        />
+      );
 
     case 2:
       amountInKshs = theArgs[1];
@@ -86,8 +98,15 @@ function getStepContent(...theArgs) {
       let setphoneNumberI = theArgs[5];
 
       //Check phone number
-      return <Paybill amountInKshs={amountInKshs} phoneNumberI={phoneNumberI} paybillnumber={paybillnumber} 
-      setNextDisabledF={setNextDisabledF} setphoneNumberI={setphoneNumberI}/>;
+      return (
+        <Paybill
+          amountInKshs={amountInKshs}
+          phoneNumberI={phoneNumberI}
+          paybillnumber={paybillnumber}
+          setNextDisabledF={setNextDisabledF}
+          setphoneNumberI={setphoneNumberI}
+        />
+      );
 
     case 3:
       //Show response of payments
@@ -95,9 +114,15 @@ function getStepContent(...theArgs) {
       usdcAddress = theArgs[2];
       cryptoAmnt = theArgs[3];
       setNextDisabled = theArgs[4];
-      
-      return <Status successData={successData} usdcAddress={usdcAddress} 
-      cryptoAmnt={cryptoAmnt} setNextDisabled={setNextDisabled}/>;
+
+      return (
+        <Status
+          successData={successData}
+          usdcAddress={usdcAddress}
+          cryptoAmnt={cryptoAmnt}
+          setNextDisabled={setNextDisabled}
+        />
+      );
 
     default:
       throw new Error("Unkown step");
@@ -160,19 +185,46 @@ export default function Checkout(props) {
   const steps = [
     {
       title: "Enter Amount",
-      component: getStepContent(0,usdcAddress,amountInKshs,setamountInKshs,setNextDisabled)
+      component: getStepContent(
+        0,
+        usdcAddress,
+        amountInKshs,
+        setamountInKshs,
+        setNextDisabled
+      ),
     },
     {
       title: "Enter USDC Address",
-      component: getStepContent(1,usdcAddress,amountInKshs,phoneNumber,setNextDisabled,setusdcAddress,setcryptoAmnt)
+      component: getStepContent(
+        1,
+        usdcAddress,
+        amountInKshs,
+        phoneNumber,
+        setNextDisabled,
+        setusdcAddress,
+        setcryptoAmnt
+      ),
     },
     {
       title: "Make Payment",
-      component: getStepContent(2,amountInKshs,phoneNumber,paybillnumber,setNextDisabled,setphoneNumber)
+      component: getStepContent(
+        2,
+        amountInKshs,
+        phoneNumber,
+        paybillnumber,
+        setNextDisabled,
+        setphoneNumber
+      ),
     },
     {
       title: "Recieve USDC",
-      component: getStepContent(3,successData,usdcAddress,cryptoAmnt,setNextDisabled),
+      component: getStepContent(
+        3,
+        successData,
+        usdcAddress,
+        cryptoAmnt,
+        setNextDisabled
+      ),
     },
   ];
 

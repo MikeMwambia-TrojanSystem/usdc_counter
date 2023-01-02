@@ -4,8 +4,14 @@ import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import validate from "../utils/validation";
 
-export default function Usdcaddress({usdcAddressI,amountInKshs,phoneNumber,setNextDisabledF,setusdcAddress,setcryptoAmntI }) {
-  
+export default function Usdcaddress({
+  usdcAddressI,
+  amountInKshs,
+  phoneNumber,
+  setNextDisabledF,
+  setusdcAddress,
+  setcryptoAmntI,
+}) {
   let setNextDisabled = setNextDisabledF;
 
   let usdcAddressH = setusdcAddress;
@@ -19,19 +25,15 @@ export default function Usdcaddress({usdcAddressI,amountInKshs,phoneNumber,setNe
   let cryptoAmntT = Number(kshsAmount) / Number(rate);
 
   //Set the amount in crypto someone will get
-  useEffect(() =>{
+  useEffect(() => {
     setcryptoAmnt(cryptoAmntT);
-  },[])
+  }, []);
 
   const [usdcAddress, setusdcAddressU] = React.useState(usdcAddressI);
 
-
   const [helperText, sethelperText] = React.useState(null);
 
-
-
   useEffect(() => {
-
     //Set USDC wallet address
     usdcAddressH(usdcAddress);
 

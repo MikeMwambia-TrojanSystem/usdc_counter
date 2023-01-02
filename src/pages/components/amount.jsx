@@ -5,8 +5,12 @@ import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import validate from "../utils/validation";
 
-export default function Kshsamount({usdcAddress,amountInKshs,setamountInKshs,setNextDisabled}) {
-
+export default function Kshsamount({
+  usdcAddress,
+  amountInKshs,
+  setamountInKshs,
+  setNextDisabled,
+}) {
   let setAmountInKsh = setamountInKshs || 0;
 
   let setNextBDisabled = setNextDisabled || null;
@@ -25,9 +29,8 @@ export default function Kshsamount({usdcAddress,amountInKshs,setamountInKshs,set
   //Minimum Amount in Kshs
   let minAmount = process.env.NEXT_PUBLIC_minAmount;
 
-  const defaultAmount = amountInKshs || '';
+  const defaultAmount = amountInKshs || "";
   const [amountKshs, setKshsAmount] = React.useState(defaultAmount);
-  
 
   const [helperText, sethelperText] = React.useState("");
 
@@ -35,7 +38,7 @@ export default function Kshsamount({usdcAddress,amountInKshs,setamountInKshs,set
   useEffect(() => {
     //Set the amount
     setAmountInKsh(amountKshs);
-    
+
     //Verify if true enable next button
     validate("amount", amountKshs)
       ? (setNextBDisabled(false), sethelperText(""))

@@ -3,7 +3,12 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
 
-export default function Status({successData,usdcAddress,cryptoAmnt,setNextDisabled }) {
+export default function Status({
+  successData,
+  usdcAddress,
+  cryptoAmnt,
+  setNextDisabled,
+}) {
   let responseStatus = successData;
 
   let usdcAddressF = usdcAddress;
