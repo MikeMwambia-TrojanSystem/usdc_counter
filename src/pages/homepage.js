@@ -46,14 +46,14 @@ function getStepContent(...theArgs) {
   const step = theArgs[0];
   const data = theArgs[1];
 
-  console.log(theArgs);
-  console.log("hhhhhhhh");
   let usdcAddress = null;
   let amountInKshs = null;
   let phoneNumber = null;
   let setamountInKshs = null;
   let setNextDisabled = null;
   let setusdcAddress = null;
+  let setNextDisabledF = null;
+  let cryptoAmnt = null;
 
   switch (step) {
     case 0:
@@ -75,7 +75,7 @@ function getStepContent(...theArgs) {
       let usdcAddressI = theArgs[1];
       amountInKshs = theArgs[2];
       phoneNumber = theArgs[3];
-      let setNextDisabledF = theArgs[4];
+      setNextDisabledF = theArgs[4];
       setusdcAddress = theArgs[5];
       let setcryptoAmntI = theArgs[6];
 
@@ -93,7 +93,7 @@ function getStepContent(...theArgs) {
     case 2:
       amountInKshs = theArgs[1];
       let phoneNumberI = theArgs[2];
-      paybillnumber = theArgs[3];
+      let paybillnumber = theArgs[3];
       setNextDisabledF = theArgs[4];
       let setphoneNumberI = theArgs[5];
 
