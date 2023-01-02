@@ -19,10 +19,9 @@ import Paybill from "./components/pay";
 import Status from "./components/status";
 import Usdcaddress from "./components/usdcaddress";
 import { StepContent } from "@mui/material";
-import ErrorIcon from '@mui/icons-material/Error';
-import ThumbUpIcon from '@mui/icons-material/ThumbUp';
-import { Toaster } from 'react-hot-toast';
-
+import ErrorIcon from "@mui/icons-material/Error";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import { Toaster } from "react-hot-toast";
 
 //Copyright
 function Copyright() {
@@ -43,113 +42,139 @@ function Copyright() {
   );
 }
 
-
 function getStepContent(...theArgs) {
-
   const step = theArgs[0];
   const data = theArgs[1];
 
+  console.log(theArgs)
+  console.log('hhhhhhhh')
+  let usdcAddress = null;
+  let amountInKshs = null;
+  let phoneNumber = null;
+  let setamountInKshs = null;
+  let setNextDisabled = null;
+  let setusdcAddress = null;
+
+
   switch (step) {
-  
+
     case 0:
-      //Check amount
-      return <Kshsamount data={data}/>;
+       usdcAddress = theArgs[1];
+       amountInKshs = theArgs[2];
+       setamountInKshs = theArgs[3];
+       setNextDisabled = theArgs[4];
+
+      return <Kshsamount usdcAddress={usdcAddress} amountInKshs ={amountInKshs} 
+      setamountInKshs={setamountInKshs} setNextDisabled={setNextDisabled}/>;
 
     case 1:
-      //Check USDC address
-      return <Usdcaddress data={data}/>;
+      let usdcAddressI = theArgs[1];
+      amountInKshs = theArgs[2];
+      phoneNumber = theArgs[3];
+      let setNextDisabledF = theArgs[4];
+      setusdcAddress = theArgs[5];
+      let setcryptoAmntI = theArgs[6];
+
+      return <Usdcaddress usdcAddressI={usdcAddressI} amountInKshs={amountInKshs} phoneNumber = {phoneNumber} 
+      setNextDisabledF={setNextDisabledF} setusdcAddress={setusdcAddress} setcryptoAmntI={setcryptoAmntI}/>;
 
     case 2:
+      amountInKshs = theArgs[1];
+      let phoneNumberI = theArgs[2];
+      paybillnumber = theArgs[3];
+      setNextDisabledF = theArgs[4];
+      let setphoneNumberI = theArgs[5];
+
       //Check phone number
-      return <Paybill data={data}/>;
+      return <Paybill amountInKshs={amountInKshs} phoneNumberI={phoneNumberI} paybillnumber={paybillnumber} 
+      setNextDisabledF={setNextDisabledF} setphoneNumberI={setphoneNumberI}/>;
 
     case 3:
       //Show response of payments
-      return <Status data={data}/>;
+      let successData = theArgs[1];
+      usdcAddress = theArgs[2];
+      cryptoAmnt = theArgs[3];
+      setNextDisabled = theArgs[4];
+      
+      return <Status successData={successData} usdcAddress={usdcAddress} 
+      cryptoAmnt={cryptoAmnt} setNextDisabled={setNextDisabled}/>;
 
     default:
       throw new Error("Unkown step");
   }
-
 }
-
 
 //Theme
 const theme = createTheme();
 
 //Checkout function
 export default function Checkout(props) {
-
   const { open, paybillnumber, maxAmount, rate } = props;
 
-
-  const successData = 'Success';
+  const successData = "Success";
 
   const [activeStep, setActiveStep] = React.useState(0);
   const [nextDisabled, setNextDisabled] = React.useState(true);
-  const [amountInKshs, setamountInKshs] = React.useState('');
-  const [usdcAddress, setusdcAddress] = React.useState('');
-  const [phoneNumber, setphoneNumber] = React.useState('');
+  const [amountInKshs, setamountInKshs] = React.useState("");
+  const [usdcAddress, setusdcAddress] = React.useState("");
+  const [phoneNumber, setphoneNumber] = React.useState("");
   const [cryptoAmnt, setcryptoAmnt] = React.useState(0);
 
   //Amount component
   const amntData = {
-                    maxAmount,
-                    rate,
-                    usdcAddress,
-                    amountInKshs,
-                    setamountInKshs:setamountInKshs,
-                    setNextDisabled:setNextDisabled
-                  };
+    maxAmount,
+    rate,
+    usdcAddress,
+    amountInKshs,
+    setamountInKshs: setamountInKshs,
+    setNextDisabled: setNextDisabled,
+  };
 
   //USDC component
   const usdcData = {
-                    amountInKshs,
-                    usdcAddress,
-                    phoneNumber,
-                    setNextDisabled:setNextDisabled,
-                    setusdcAddress : setusdcAddress,
-                    setcryptoAmnt : setcryptoAmnt
-                  };
+    amountInKshs,
+    usdcAddress,
+    phoneNumber,
+    setNextDisabled: setNextDisabled,
+    setusdcAddress: setusdcAddress,
+    setcryptoAmnt: setcryptoAmnt,
+  };
 
   //Payment data
   const payData = {
-                    amountInKshs,
-                    phoneNumber,
-                    paybillnumber,
-                    setNextDisabled:setNextDisabled,
-                    setphoneNumber : setphoneNumber
-                  }
+    amountInKshs,
+    phoneNumber,
+    paybillnumber,
+    setNextDisabled: setNextDisabled,
+    setphoneNumber: setphoneNumber,
+  };
 
   //Status data
   const statusData = {
-                     successData,
-                     usdcAddress,
-                     cryptoAmnt,
-                     setNextDisabled:setNextDisabled
-                    }
+    successData,
+    usdcAddress,
+    cryptoAmnt,
+    setNextDisabled: setNextDisabled,
+  };
 
   const steps = [
     {
       title: "Enter Amount",
-      component: getStepContent(0,amntData)
+      component: getStepContent(0,usdcAddress,amountInKshs,setamountInKshs,setNextDisabled)
     },
     {
       title: "Enter USDC Address",
-      component: getStepContent(1,usdcData)
+      component: getStepContent(1,usdcAddress,amountInKshs,phoneNumber,setNextDisabled,setusdcAddress,setcryptoAmnt)
     },
     {
       title: "Make Payment",
-      component: getStepContent(2,payData)
+      component: getStepContent(2,amountInKshs,phoneNumber,paybillnumber,setNextDisabled,setphoneNumber)
     },
     {
       title: "Recieve USDC",
-      //Or Error depending
-      component: getStepContent(3,statusData)
+      component: getStepContent(3,successData,usdcAddress,cryptoAmnt,setNextDisabled),
     },
   ];
-
-
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -159,11 +184,9 @@ export default function Checkout(props) {
     setActiveStep(activeStep - 1);
   };
 
-
-  
   return (
     <ThemeProvider theme={theme}>
-      <Toaster/>
+      <Toaster />
       <CssBaseline />
       <AppBar
         position="absolute"
@@ -201,15 +224,17 @@ export default function Checkout(props) {
                   <Box sx={{ "& button": { m: 1 } }}>
                     <div>
                       <Button
-                        disabled={open === false || nextDisabled} 
-                        onClick={handleNext} 
-                        size="small">
+                        disabled={open === false || nextDisabled}
+                        onClick={handleNext}
+                        size="small"
+                      >
                         {index === steps.length - 1 ? "Finish" : "Next"}
                       </Button>
                       <Button
-                        disabled={index === 0 || open === false }
+                        disabled={index === 0 || open === false}
                         onClick={handleBack}
-                        size="small">
+                        size="small"
+                      >
                         Back
                       </Button>
                     </div>
@@ -219,15 +244,21 @@ export default function Checkout(props) {
             ))}
           </Stepper>
           <React.Fragment>
-              <Typography variant="h6" gutterBottom>
-                Status : - {(open=== false) ? 
-                <span>Closed <ErrorIcon/></span>: 
-                <span>Open <ThumbUpIcon/></span>
-                }
-              </Typography>
-              <Typography variant="subtitle1">
-                Status of the transaction and time out status.
-              </Typography>
+            <Typography variant="h6" gutterBottom>
+              Status : -{" "}
+              {open === false ? (
+                <span>
+                  Closed <ErrorIcon />
+                </span>
+              ) : (
+                <span>
+                  Open <ThumbUpIcon />
+                </span>
+              )}
+            </Typography>
+            <Typography variant="subtitle1">
+              Status of the transaction and time out status.
+            </Typography>
           </React.Fragment>
         </Paper>
         <Copyright />
@@ -239,10 +270,10 @@ export default function Checkout(props) {
 //Get server side props
 export const getServerSideProps = async (context) => {
   //Status
-  let open = true;//false; //default false
+  let open = true; //false; //default false
 
   //Error
-  let error = null;
+  let error = "";
 
   //Check treasury amount
   const treasuryAddress = process.env.NEXT_PUBLIC_TREASURY;
@@ -283,8 +314,7 @@ export const getServerSideProps = async (context) => {
       paybillnumber,
       maxAmount,
       rate,
-      minAmount
+      minAmount,
     },
   };
 };
-

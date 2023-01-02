@@ -2,45 +2,53 @@ import React, { useEffect } from "react";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
-import validate from '../utils/validation';
+import validate from "../utils/validation";
 
-export default function Usdcaddress({data}) {
+export default function Usdcaddress({usdcAddressI,amountInKshs,phoneNumber,setNextDisabledF,setusdcAddress,setcryptoAmntI }) {
+  
+  let setNextDisabled = setNextDisabledF;
 
-  let setNextDisabled = data.setNextDisabled;
+  let usdcAddressH = setusdcAddress;
 
-  let usdcAddressH = data.setusdcAddress;
-
-  let setcryptoAmnt = data.setcryptoAmnt;
+  let setcryptoAmnt = setcryptoAmntI;
 
   let rate = process.env.NEXT_PUBLIC_RATE;
 
-  let kshsAmount = data.amountInKshs;
+  let kshsAmount = amountInKshs;
 
-  let cryptoAmntT =   Number(kshsAmount) / Number(rate);
-  setcryptoAmnt(cryptoAmntT);
+  let cryptoAmntT = Number(kshsAmount) / Number(rate);
 
-  const [usdcAddress, setusdcAddressU] = React.useState(data.usdcAddress);
-  usdcAddressH(usdcAddress);
+  //Set the amount in crypto someone will get
+  useEffect(() =>{
+    setcryptoAmnt(cryptoAmntT);
+  },[])
+
+  const [usdcAddress, setusdcAddressU] = React.useState(usdcAddressI);
+
 
   const [helperText, sethelperText] = React.useState(null);
 
 
-  useEffect(()=>{
 
-  //Verify if true enable next button
-  (validate('usdc',usdcAddress))  ? (setNextDisabled(false),sethelperText(null)):
-  (setNextDisabled(true),sethelperText(`Enter polygon chain USDC address`))
+  useEffect(() => {
 
-   //Do clean up 
-   return ()=>{
+    //Set USDC wallet address
+    usdcAddressH(usdcAddress);
 
-  //Verify if true enable next button
-  (validate('amount',kshsAmount) && validate('phone',data.phoneNumber))  ? setNextDisabled(false) : setNextDisabled(true);
+    //Verify if true enable next button
+    validate("usdc", usdcAddress)
+      ? (setNextDisabled(false), sethelperText(null))
+      : (setNextDisabled(true),
+        sethelperText(`Enter polygon chain USDC address`));
 
-  }
-
-  },[usdcAddress])
-
+    //Do clean up
+    return () => {
+      //Verify if true enable next button
+      validate("amount", kshsAmount) && validate("phone", phoneNumber)
+        ? setNextDisabled(false)
+        : setNextDisabled(true);
+    };
+  }, [usdcAddress]);
 
   return (
     <React.Fragment>
@@ -62,7 +70,7 @@ export default function Usdcaddress({data}) {
           fullWidth
           value={usdcAddress}
           variant="standard"
-          onChange={e => setusdcAddressU(e.target.value)}
+          onChange={(e) => setusdcAddressU(e.target.value)}
         />
         <Typography variant="caption" sx={{ m: 1 }}>
           {helperText}
